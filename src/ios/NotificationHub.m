@@ -44,6 +44,10 @@
     self.notificationHubPath = [command.arguments objectAtIndex:0];
     self.connectionString = [command.arguments objectAtIndex:1];
     
+    NSString *tagsString = [command.arguments objectAtIndex:3];
+    NSArray *tagsArray = [tagsString componentsSeparatedByString:@";"];
+    self.tags = [NSSet setWithArray:tagsArray];
+    
     self.callbackId = command.callbackId;
     
     if (IsAtLeastiOSVersion(@"8.0")) {
@@ -52,7 +56,8 @@
     } else {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes: UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound];
     }
-    
+	
+	[[UIApplication sharedApplication] registerForRemoteNotifications];    
 }
 
 - (void)unregisterApplication:(CDVInvokedUrlCommand*)command
@@ -87,7 +92,7 @@
     SBNotificationHub* hub = [[SBNotificationHub alloc] initWithConnectionString:
                               self.connectionString notificationHubPath:self.notificationHubPath];
 
-    [hub registerNativeWithDeviceToken:deviceToken tags:nil completion:^(NSError* error) {
+    [hub registerNativeWithDeviceToken:deviceToken tags:self.tags completion:^(NSError* error) {
         if (error != nil) {
             [self failWithError:error];
             return;
@@ -163,7 +168,7 @@
     }
     pluginResult.keepCallback = keepCalback;
     
-    [self success:pluginResult callbackId:self.callbackId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 }
 
 -(void)failWithError:(NSError *)error
