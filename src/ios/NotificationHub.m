@@ -18,11 +18,13 @@
 #import "NotificationHub.h"
 #import <WindowsAzureMessaging/WindowsAzureMessaging.h>
 
-@implementation NotificationHub {
+@implementation NotificationHub
+{
 
 }
 
-- (void)pluginInitialize {
+- (void)pluginInitialize
+{
     // apply to our custom events since only AppDelegate can receive corresponding events
     // see iOS platform Quirks on plugin home page to get further instructions
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -78,6 +80,7 @@
     }];
     
 }
+
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 {
     [[UIApplication sharedApplication] registerForRemoteNotifications];
